@@ -18,8 +18,8 @@ public class Ages {
 
     /**
      *
-     * @param sql
-     * @throws SQLException
+     * @param sql The sql query for creation of a new table
+     * @throws SQLException if there is something wrong
      */
     public static void createNewTable(String sql) throws SQLException {
         Connector c = new Connector();
@@ -34,9 +34,10 @@ public class Ages {
     }
 
     /**
-     *
-     * @param conn
-     * @throws SQLException
+     * Populates the table of ages by initial values that were in the FVS table
+     * It adds as well columns for periods and the ages corresponging<br>
+     * @param conn Connection to the database
+     * @throws SQLException if there is a problem
      */
     private static void populateTableWithInitialValues(Connection conn) throws SQLException {
         String select =  "SELECT standid, si_class, forest_type, ageef FROM FVS_COMPUTE";
@@ -80,9 +81,9 @@ public class Ages {
      *  many columns we will need.
      *  need to be fixed so it behaves well when the column already exists
      *  Right now will just fail
-     * @param conn
-     * @param harvestPeriod
-     * @throws SQLException
+     * @param conn The Connection to the database
+     * @param harvestPeriod period in which the harvest happens 0 for no harvest
+     * @throws SQLException if a problem occurs
      */
     private static void addColumnToTable(Connection conn, int harvestPeriod) throws SQLException {
         String alteration = "ALTER TABLE ages ADD period" + harvestPeriod +  " REAL";
