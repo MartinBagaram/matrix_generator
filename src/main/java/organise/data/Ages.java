@@ -7,8 +7,8 @@ import java.sql.*;
 public class Ages {
 
     private static String db = "db_example.db";
-    private final static int PLANNING_HORIZON = 40;
-    private final static int PERIOD_LENGTH = 10;
+    private final int PLANNING_HORIZON;
+    private final int PERIOD_LENGTH;
     private static String sql = "CREATE TABLE IF NOT EXISTS ages (\n"
                         + "standid TEXT, \n" //PRIMARY KEY
                         + "si_class INTEGER ,\n"
@@ -17,11 +17,23 @@ public class Ages {
                         + ");";
 
     /**
-     *
+     * Constructs Ages class that will generate ages table in the database
+     * @param planningHorizon the length of the planning horizon
+     * @param periodLength the length of each period, It can be 5, 10 or others
+     */
+    public Ages(int planningHorizon, int periodLength) {
+        PLANNING_HORIZON = planningHorizon;
+        PERIOD_LENGTH = periodLength;
+    }
+
+    /**
+     * Creates a new table for ages indicating the age of the stand at the
+     * end of the planning horizon if the stand is harvested in each perio.
+     * The case of no harvest is indicated as <i>period0</i>
      * @param sql The sql query for creation of a new table
      * @throws SQLException if there is something wrong
      */
-    public static void createNewTable(String sql) throws SQLException {
+    public  void createNewTable(String sql) throws SQLException {
         Connector c = new Connector();
         Connection conn = c.getConnection(db);
         Statement statement =  conn.createStatement();
@@ -39,7 +51,7 @@ public class Ages {
      * @param conn Connection to the database
      * @throws SQLException if there is a problem
      */
-    private static void populateTableWithInitialValues(Connection conn) throws SQLException {
+    private  void populateTableWithInitialValues(Connection conn) throws SQLException {
         String select =  "SELECT standid, si_class, forest_type, ageef FROM FVS_COMPUTE";
         Statement stmt = conn.createStatement();
         ResultSet resultSet = stmt.executeQuery(select);
@@ -85,12 +97,9 @@ public class Ages {
      * @param harvestPeriod period in which the harvest happens 0 for no harvest
      * @throws SQLException if a problem occurs
      */
-    private static void addColumnToTable(Connection conn, int harvestPeriod) throws SQLException {
+    private  void addColumnToTable(Connection conn, int harvestPeriod) throws SQLException {
         String alteration = "ALTER TABLE ages ADD period" + harvestPeriod +  " REAL";
         conn.createStatement().execute(alteration);
     }
 
-    public static void main(String[] args) throws SQLException {
-        createNewTable(sql);
-    }
 }
